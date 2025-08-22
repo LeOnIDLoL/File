@@ -108,6 +108,47 @@
     .btn-primary{ background:linear-gradient(90deg,#8b5cf6,#3b82f6,#22d3ee); color:#fff; padding:.55rem .85rem; border-radius:.55rem; transition:filter .25s; }
     .btn-primary:hover{ filter:brightness(1.05); }
     .spark{ width:100px; height:28px; }
+    
+    /* -------- Mobile improvements -------- */
+    @media (max-width: 768px) {
+      .nav-btn { padding: .5rem .75rem; font-size: .875rem; }
+      .table-wrap { font-size: .75rem; }
+      .table-wrap th, .table-wrap td { padding: .4rem .5rem; }
+      .card { padding: .75rem; }
+      .kpi .value { font-size: 1.25rem; }
+      .canvas-wrap { height: 180px; }
+      .pre-wrap { width: 90vw; }
+      .logo-badge { width: 64px; height: 64px; }
+      .brand { font-size: 1.5rem; }
+      .sub { font-size: .875rem; }
+    }
+    
+    /* -------- Loading states -------- */
+    .loading { opacity: 0.6; pointer-events: none; }
+    .loading::after { content: ''; position: absolute; top: 50%; left: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border: 2px solid transparent; border-top: 2px solid #8b5cf6; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    /* -------- Error states -------- */
+    .error { border-color: #ef4444 !important; background: rgba(239, 68, 68, 0.1) !important; }
+    .error-message { color: #ef4444; font-size: .875rem; margin-top: .5rem; }
+    
+    /* -------- Success states -------- */
+    .success { border-color: #10b981 !important; background: rgba(16, 185, 129, 0.1) !important; }
+    
+    /* -------- Smooth transitions -------- */
+    * { transition: all 0.2s ease; }
+    
+    /* -------- Focus states -------- */
+    input:focus, select:focus, textarea:focus { 
+      outline: none; 
+      border-color: #8b5cf6 !important; 
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); 
+    }
+    
+    /* -------- Button improvements -------- */
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button:not(:disabled):hover { transform: translateY(-1px); }
+    button:not(:disabled):active { transform: translateY(0); }
   </style>
 </head>
 <body class="font-inter bg-slate-900 text-white min-h-screen overflow-x-hidden">
@@ -128,16 +169,27 @@
       <div class="mt-3 text-xs text-white/60" id="preHint">Подготовка интерфейса…</div>
     </div>
   </div>
+  
   <!-- Toast -->
   <div id="toast" role="status" aria-live="polite">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span id="toast-text"></span>
   </div>
+  
   <!-- NAV -->
   <nav class="fixed top-0 inset-x-0 z-40">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <button class="logo-anim text-xl sm:text-2xl font-bold tracking-tight hover:opacity-90 transition" onclick="show('home')">DropFiles</button>
-      <div class="flex items-center gap-2 sm:gap-4 text-sm">
+      
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md bg-white/10 hover:bg-white/20 transition">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+      
+      <!-- Desktop navigation -->
+      <div class="hidden md:flex items-center gap-2 sm:gap-4 text-sm">
         <button class="nav-btn" data-target="home">Главная</button>
         <button class="nav-btn" data-target="earn">Заработок</button>
         <button class="nav-btn" data-target="income">Доход</button>
@@ -153,6 +205,29 @@
         <div id="nav-user" class="hidden items-center gap-2">
           <span id="nav-username" class="text-white/80"></span>
           <button class="px-3 py-1.5 rounded-md bg-red-600/90 hover:bg-red-600 transition" onclick="logout()">Выйти</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile navigation -->
+    <div id="mobile-menu" class="md:hidden hidden bg-slate-800/95 backdrop-blur-md border-t border-white/10">
+      <div class="px-4 py-3 space-y-2">
+        <button class="nav-btn w-full text-left" data-target="home">Главная</button>
+        <button class="nav-btn w-full text-left" data-target="earn">Заработок</button>
+        <button class="nav-btn w-full text-left" data-target="income">Доход</button>
+        <button class="nav-btn w-full text-left auth-required" data-target="upload">Загрузка</button>
+        <button class="nav-btn w-full text-left auth-required" data-target="files">Файлы</button>
+        <button class="nav-btn w-full text-left" data-target="ref">Партнёрка</button>
+        <button class="nav-btn w-full text-left auth-required" data-target="payouts">Выплаты</button>
+        <button class="nav-btn w-full text-left" data-target="analytics">Аналитика</button>
+        <button class="nav-btn w-full text-left" data-target="support">Поддержка</button>
+        <div class="pt-2 border-t border-white/10">
+          <button id="mobile-login" class="nav-btn w-full text-left px-3 py-2 rounded-md bg-white/10 hover:bg-white/20 transition" onclick="show('login')">Войти</button>
+          <button id="mobile-register" class="nav-btn w-full text-left px-3 py-2 rounded-md bg-purple-600 hover:bg-purple-700 transition" onclick="show('register')">Регистрация</button>
+          <div id="mobile-user" class="hidden">
+            <span id="mobile-username" class="block px-3 py-2 text-white/80"></span>
+            <button class="nav-btn w-full text-left px-3 py-2 rounded-md bg-red-600/90 hover:bg-red-600 transition" onclick="logout()">Выйти</button>
+          </div>
         </div>
       </div>
     </div>
@@ -537,9 +612,35 @@
     }
     
     function copy(t){
-      navigator.clipboard.writeText(t).then(() => {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(t).then(() => {
+          toast('Скопировано');
+        }).catch(() => {
+          fallbackCopy(t);
+        });
+      } else {
+        fallbackCopy(t);
+      }
+    }
+    
+    function fallbackCopy(text) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
         toast('Скопировано');
-      });
+      } catch (err) {
+        toast('Ошибка копирования', false);
+      }
+      
+      document.body.removeChild(textArea);
     }
     
     function formatSize(b){
@@ -559,83 +660,139 @@
     }
     
     function requireAuth(){
-      if(!isAuth()){
-        toast('Войдите, чтобы продолжить', false);
-        show('login');
+      try {
+        if(!isAuth()){
+          toast('Войдите, чтобы продолжить', false);
+          show('login');
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error('Error checking auth:', error);
+        toast('Ошибка проверки авторизации', false);
         return false;
       }
-      return true;
     }
     
     function routeAuthOr(id){
-      if(isAuth()) {
-        show(id);
-      } else {
+      try {
+        if(isAuth()) {
+          show(id);
+        } else {
+          show('login');
+        }
+      } catch (error) {
+        console.error('Error routing:', error);
         show('login');
       }
     }
     
     function uuid(){
-      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-      );
+      try {
+        if (crypto && crypto.getRandomValues) {
+          return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+          );
+        } else {
+          // Fallback for older browsers
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+        }
+      } catch (error) {
+        console.error('Error generating UUID:', error);
+        return 'fallback-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+      }
     }
     
     // ---------- Preloader ----------
     function spawnBubbles(){
-      const field = document.getElementById('bubbleField');
-      if(!field) return;
-      
-      const N = 18;
-      for(let i = 0; i < N; i++){
-        const b = document.createElement('span');
-        b.className = 'b';
-        b.style.setProperty('--s', Math.floor(Math.random() * 28 + 16) + 'px');
-        b.style.setProperty('--x', Math.floor(Math.random() * 96) + '%');
-        b.style.setProperty('--t', (Math.random() * 3 + 4).toFixed(2) + 's');
-        b.style.animationDelay = (Math.random() * 2).toFixed(2) + 's';
-        field.appendChild(b);
+      try {
+        const field = document.getElementById('bubbleField');
+        if(!field) return;
+        
+        const N = 18;
+        for(let i = 0; i < N; i++){
+          const b = document.createElement('span');
+          b.className = 'b';
+          b.style.setProperty('--s', Math.floor(Math.random() * 28 + 16) + 'px');
+          b.style.setProperty('--x', Math.floor(Math.random() * 96) + '%');
+          b.style.setProperty('--t', (Math.random() * 3 + 4).toFixed(2) + 's');
+          b.style.animationDelay = (Math.random() * 2).toFixed(2) + 's';
+          field.appendChild(b);
+        }
+      } catch (error) {
+        console.error('Error spawning bubbles:', error);
       }
     }
     
     function setPreProgress(p){
-      const preBar = document.getElementById('preBar');
-      if (!preBar) return;
-      
-      preBar.style.width = Math.min(100, Math.max(0, p)) + '%';
+      try {
+        const preBar = document.getElementById('preBar');
+        if (!preBar) return;
+        
+        preBar.style.width = Math.min(100, Math.max(0, p)) + '%';
+      } catch (error) {
+        console.error('Error setting preloader progress:', error);
+      }
     }
     
     function finishPreloader(){
-      const pre = document.getElementById('preloader');
-      const preBar = document.getElementById('preBar');
-      const preHint = document.getElementById('preHint');
-      
-      if (!preBar || !preHint) return;
-      
-      setPreProgress(100);
-      preHint.textContent = 'Готово!';
-      
-      setTimeout(() => {
-        if (pre) pre.classList.add('hidden');
-      }, 250);
+      try {
+        const pre = document.getElementById('preloader');
+        const preBar = document.getElementById('preBar');
+        const preHint = document.getElementById('preHint');
+        
+        if (!preBar || !preHint) return;
+        
+        setPreProgress(100);
+        preHint.textContent = 'Готово!';
+        
+        setTimeout(() => {
+          try {
+            if (pre) pre.classList.add('hidden');
+          } catch (error) {
+            console.error('Error hiding preloader:', error);
+          }
+        }, 250);
+      } catch (error) {
+        console.error('Error finishing preloader:', error);
+      }
     }
     
     document.addEventListener('DOMContentLoaded', ()=>{
-      spawnBubbles();
-      let p = 0;
-      const tick = setInterval(() => {
-        p += Math.random() * 9 + 4;
-        if(p >= 90){
-          p = 90;
-          clearInterval(tick);
-        }
-        setPreProgress(p);
-      }, 180);
-      
-      setTimeout(finishPreloader, 4500);
+      try {
+        spawnBubbles();
+        let p = 0;
+        const tick = setInterval(() => {
+          try {
+            p += Math.random() * 9 + 4;
+            if(p >= 90){
+              p = 90;
+              clearInterval(tick);
+            }
+            setPreProgress(p);
+          } catch (error) {
+            console.error('Error in preloader tick:', error);
+            clearInterval(tick);
+          }
+        }, 180);
+        
+        setTimeout(finishPreloader, 4500);
+      } catch (error) {
+        console.error('Error in DOMContentLoaded preloader:', error);
+      }
     });
     
-    window.addEventListener('load', () => setTimeout(finishPreloader, 300));
+    window.addEventListener('load', () => {
+      try {
+        setTimeout(finishPreloader, 300);
+      } catch (error) {
+        console.error('Error in load event:', error);
+      }
+    });
     
     // ---------- Nav: hide/show on scroll ----------
     let lastScroll = 0, glowTimeout;
@@ -643,107 +800,190 @@
     
     if (navEl) {
       window.addEventListener('scroll', () => {
-        const curr = window.scrollY;
-        if (curr > lastScroll && curr > 80) {
-          navEl.classList.add('nav-hidden');
-        } else {
-          navEl.classList.remove('nav-hidden');
-          navEl.classList.add('nav-show-glow');
-          clearTimeout(glowTimeout);
-          glowTimeout = setTimeout(() => navEl.classList.remove('nav-show-glow'), 500);
+        try {
+          const curr = window.scrollY;
+          if (curr > lastScroll && curr > 80) {
+            navEl.classList.add('nav-hidden');
+          } else {
+            navEl.classList.remove('nav-hidden');
+            navEl.classList.add('nav-show-glow');
+            clearTimeout(glowTimeout);
+            glowTimeout = setTimeout(() => {
+              try {
+                navEl.classList.remove('nav-show-glow');
+              } catch (error) {
+                console.error('Error removing nav glow:', error);
+              }
+            }, 500);
+          }
+          lastScroll = curr;
+        } catch (error) {
+          console.error('Error in scroll handler:', error);
         }
-        lastScroll = curr;
       });
+    }
+    
+    // ---------- Mobile menu ----------
+    function toggleMobileMenu() {
+      try {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        
+        if (mobileMenu && mobileMenuBtn) {
+          const isHidden = mobileMenu.classList.contains('hidden');
+          
+          if (isHidden) {
+            mobileMenu.classList.remove('hidden');
+            mobileMenuBtn.innerHTML = `
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            `;
+          } else {
+            mobileMenu.classList.add('hidden');
+            mobileMenuBtn.innerHTML = `
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18M3 6h18M3 18h18"/>
+              </svg>
+            `;
+          }
+        }
+      } catch (error) {
+        console.error('Error toggling mobile menu:', error);
+      }
     }
     
     // ---------- Navigation SPA switch ----------
     function highlightNav(id){
-      document.querySelectorAll('nav .nav-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.target === id);
-      });
+      try {
+        document.querySelectorAll('nav .nav-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.target === id);
+        });
+        
+        // Close mobile menu when navigating
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+          toggleMobileMenu();
+        }
+      } catch (error) {
+        console.error('Error highlighting nav:', error);
+      }
     }
     
     function show(id){
-      const current = document.querySelector('main section.active');
-      const next = document.getElementById(id);
-      
-      if(!next) return;
-      
-      const guard = ['upload', 'files', 'payouts', 'ref', 'analytics'];
-      if(guard.includes(id) && !isAuth()){
-        toast('Войдите, чтобы открыть раздел', false);
-        show('login');
-        return;
+      try {
+        const current = document.querySelector('main section.active');
+        const next = document.getElementById(id);
+        
+        if(!next) {
+          console.warn('Section not found:', id);
+          return;
+        }
+        
+        const guard = ['upload', 'files', 'payouts', 'ref', 'analytics'];
+        if(guard.includes(id) && !isAuth()){
+          toast('Войдите, чтобы открыть раздел', false);
+          show('login');
+          return;
+        }
+        
+        if(current && current !== next){
+          current.classList.remove('active');
+          current.classList.add('section-fade');
+        }
+        
+        setTimeout(() => {
+          try {
+            document.querySelectorAll('main section').forEach(s => {
+              s.classList.remove('active');
+              s.classList.add('section-fade');
+            });
+            
+            const sec = document.getElementById(id);
+            if(!sec) return;
+            
+            sec.classList.remove('section-fade');
+            sec.classList.add('active');
+            
+            highlightNav(id);
+            
+            if(id === 'home') renderKPIs();
+            if(id === 'income') { renderSums(); renderChart(); renderHistory(); }
+            if(id === 'upload') renderRecentFiles();
+            if(id === 'files') renderFiles();
+            if(id === 'payouts') renderPayouts();
+            if(id === 'ref') renderRef();
+            if(id === 'analytics') renderAnalytics();
+            
+            // reveal visible for first fold
+            sec.querySelectorAll('.reveal').forEach(el => {
+              el.classList.add('visible');
+            });
+          } catch (error) {
+            console.error('Error in show timeout:', error);
+          }
+        }, current ? 280 : 0);
+      } catch (error) {
+        console.error('Error showing section:', error);
+        toast('Ошибка переключения раздела', false);
       }
-      
-      if(current && current !== next){
-        current.classList.remove('active');
-        current.classList.add('section-fade');
-      }
-      
-      setTimeout(() => {
-        document.querySelectorAll('main section').forEach(s => {
-          s.classList.remove('active');
-          s.classList.add('section-fade');
-        });
-        
-        const sec = document.getElementById(id);
-        if(!sec) return;
-        
-        sec.classList.remove('section-fade');
-        sec.classList.add('active');
-        
-        highlightNav(id);
-        
-        if(id === 'home') renderKPIs();
-        if(id === 'income') { renderSums(); renderChart(); renderHistory(); }
-        if(id === 'upload') renderRecentFiles();
-        if(id === 'files') renderFiles();
-        if(id === 'payouts') renderPayouts();
-        if(id === 'ref') renderRef();
-        if(id === 'analytics') renderAnalytics();
-        
-        // reveal visible for first fold
-        sec.querySelectorAll('.reveal').forEach(el => {
-          el.classList.add('visible');
-        });
-      }, current ? 280 : 0);
     }
     
     document.querySelectorAll('nav .nav-btn').forEach((btn, i) => {
       btn.addEventListener('click', () => {
-        show(btn.dataset.target);
+        try {
+          show(btn.dataset.target);
+        } catch (error) {
+          console.error('Error in nav button click:', error);
+        }
       });
       btn.style.animationDelay = `${0.1 * i + 0.3}s`;
     });
     
     // ---------- Reveal on scroll ----------
     const revealObserver = new IntersectionObserver((entries, obs) => {
-      entries.forEach(e => {
-        if(e.isIntersecting){
-          e.target.classList.add('visible');
-          obs.unobserve(e.target);
-        }
-      });
+      try {
+        entries.forEach(e => {
+          if(e.isIntersecting){
+            e.target.classList.add('visible');
+            obs.unobserve(e.target);
+          }
+        });
+      } catch (error) {
+        console.error('Error in reveal observer:', error);
+      }
     }, { threshold: .1 });
     
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.reveal').forEach(el => {
-        revealObserver.observe(el);
-      });
-      
-      // section fade initial
-      document.querySelectorAll('main section').forEach(s => {
-        if(!s.classList.contains('active')) {
-          s.classList.add('section-fade');
-        }
-      });
+      try {
+        document.querySelectorAll('.reveal').forEach(el => {
+          try {
+            revealObserver.observe(el);
+          } catch (error) {
+            console.error('Error observing reveal element:', error);
+          }
+        });
+        
+        // section fade initial
+        document.querySelectorAll('main section').forEach(s => {
+          try {
+            if(!s.classList.contains('active')) {
+              s.classList.add('section-fade');
+            }
+          } catch (error) {
+            console.error('Error setting section fade:', error);
+          }
+        });
+      } catch (error) {
+        console.error('Error in DOMContentLoaded reveal setup:', error);
+      }
     });
     
     // ---------- Auth UI ----------
     function initAuthUI(){
       const logged = isAuth();
       
+      // Desktop navigation
       const navLogin = document.getElementById('nav-login');
       const navRegister = document.getElementById('nav-register');
       const navUser = document.getElementById('nav-user');
@@ -756,20 +996,39 @@
         document.getElementById('nav-username').textContent = appData.user;
       }
       
+      // Mobile navigation
+      const mobileLogin = document.getElementById('mobile-login');
+      const mobileRegister = document.getElementById('mobile-register');
+      const mobileUser = document.getElementById('mobile-user');
+      const mobileUsername = document.getElementById('mobile-username');
+      
+      if (mobileLogin) mobileLogin.classList.toggle('hidden', logged);
+      if (mobileRegister) mobileRegister.classList.toggle('hidden', logged);
+      if (mobileUser) mobileUser.classList.toggle('hidden', !logged);
+      
+      if(logged && mobileUsername) {
+        mobileUsername.textContent = appData.user;
+      }
+      
       document.querySelectorAll('.auth-required').forEach(b => {
         b.disabled = !logged;
       });
     }
     
     function logout(){
-      const keepRef = appData.ref;
-      appData.user = null;
-      appData.pass = null;
-      appData.email = null;
-      appData.ref = keepRef;
-      initAuthUI();
-      show('home');
-      toast('Вы вышли', false);
+      try {
+        const keepRef = appData.ref;
+        appData.user = null;
+        appData.pass = null;
+        appData.email = null;
+        appData.ref = keepRef;
+        initAuthUI();
+        show('home');
+        toast('Вы вышли', false);
+      } catch (error) {
+        console.error('Error during logout:', error);
+        toast('Ошибка выхода', false);
+      }
     }
     
     const formRegister = document.getElementById('form-register');
@@ -777,24 +1036,51 @@
       formRegister.addEventListener('submit', e => {
         e.preventDefault();
         
-        const u = document.getElementById('reg-user').value.trim();
-        const email = document.getElementById('reg-email').value.trim();
-        const p = document.getElementById('reg-pass').value;
-        const c = document.getElementById('reg-confirm').value;
+        const userInput = document.getElementById('reg-user');
+        const emailInput = document.getElementById('reg-email');
+        const passInput = document.getElementById('reg-pass');
+        const confirmInput = document.getElementById('reg-confirm');
         
-        if(!u || !email || !p || p !== c) {
-          toast('Проверьте данные', false);
+        // Validate all inputs
+        const isUserValid = validateInput(userInput, 'text');
+        const isEmailValid = validateInput(emailInput, 'email');
+        const isPassValid = validateInput(passInput, 'password');
+        const isConfirmValid = validateInput(confirmInput, 'text');
+        
+        if (!isUserValid || !isEmailValid || !isPassValid || !isConfirmValid) {
           return;
         }
         
-        appData.user = u;
-        appData.email = email;
-        appData.pass = p;
+        const u = userInput.value.trim();
+        const email = emailInput.value.trim();
+        const p = passInput.value;
+        const c = confirmInput.value;
         
-        seedIfEmpty();
-        initAuthUI();
-        toast('Регистрация успешна');
-        show('upload');
+        if(p !== c) {
+          confirmInput.classList.add('error');
+          const errorEl = document.createElement('div');
+          errorEl.className = 'error-message';
+          errorEl.textContent = 'Пароли не совпадают';
+          confirmInput.parentNode.appendChild(errorEl);
+          return;
+        }
+        
+        try {
+          appData.user = u;
+          appData.email = email;
+          appData.pass = p;
+          
+          seedIfEmpty();
+          initAuthUI();
+          toast('Регистрация успешна');
+          show('upload');
+          
+          // Clear form
+          formRegister.reset();
+        } catch (error) {
+          console.error('Registration error:', error);
+          toast('Ошибка регистрации', false);
+        }
       });
     }
     
@@ -803,194 +1089,260 @@
       formLogin.addEventListener('submit', e => {
         e.preventDefault();
         
-        const u = document.getElementById('login-user').value.trim();
-        const p = document.getElementById('login-pass').value;
+        const userInput = document.getElementById('login-user');
+        const passInput = document.getElementById('login-pass');
         
-        if(u === appData.user && p === appData.pass) {
-          seedIfEmpty();
-          initAuthUI();
-          toast('Вход выполнен');
-          show('income');
-        } else {
-          toast('Неверный логин или пароль', false);
+        // Validate inputs
+        const isUserValid = validateInput(userInput, 'text');
+        const isPassValid = validateInput(passInput, 'password');
+        
+        if (!isUserValid || !isPassValid) {
+          return;
+        }
+        
+        const u = userInput.value.trim();
+        const p = passInput.value;
+        
+        try {
+          if(u === appData.user && p === appData.pass) {
+            seedIfEmpty();
+            initAuthUI();
+            toast('Вход выполнен');
+            show('income');
+            
+            // Clear form
+            formLogin.reset();
+          } else {
+            toast('Неверный логин или пароль', false);
+            userInput.classList.add('error');
+            passInput.classList.add('error');
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          toast('Ошибка входа', false);
         }
       });
     }
     
     // ---------- Seed data ----------
     function seedIfEmpty(){
-      if(appData.files.length === 0){
-        appData.files = [
-          mkFile('Примергайд.pdf', 1240000, 3200, 740, 412.50),
-          mkFile('Шаблонпостера.psd', 54000000, 2100, 190, 265.00),
-          mkFile('Архивресурсов.zip', 120000000, 980, 75, 120.00)
-        ];
-      }
-      
-      if(appData.hist.length === 0){
-        const days = 7;
-        const arr = [];
-        for(let i = days - 1; i >= 0; i--){
-          const d = new Date();
-          d.setDate(d.getDate() - i);
+      try {
+        if(appData.files.length === 0){
+          appData.files = [
+            mkFile('Примергайд.pdf', 1240000, 3200, 740, 412.50),
+            mkFile('Шаблонпостера.psd', 54000000, 2100, 190, 265.00),
+            mkFile('Архивресурсов.zip', 120000000, 980, 75, 120.00)
+          ];
+        }
+        
+        if(appData.hist.length === 0){
+          const days = 7;
+          const arr = [];
+          for(let i = days - 1; i >= 0; i--){
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth()+1).toString().padStart(2, '0')}.${d.getFullYear()}`;
+            
+            arr.push({
+              date: dateStr,
+              source: ['Файлы', 'Партнёрка', 'Ссылки'][Math.floor(Math.random() * 3)],
+              views: Math.floor(Math.random() * 1500 + 300),
+              income: +(Math.random() * 120 + 20).toFixed(2)
+            });
+          }
+          appData.hist = arr;
+        }
+        
+        if(appData.payouts.length === 0){
+          const d = new Date(Date.now() - 86400000 * 12);
           const dateStr = `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth()+1).toString().padStart(2, '0')}.${d.getFullYear()}`;
           
-          arr.push({
+          appData.payouts = [{
             date: dateStr,
-            source: ['Файлы', 'Партнёрка', 'Ссылки'][Math.floor(Math.random() * 3)],
-            views: Math.floor(Math.random() * 1500 + 300),
-            income: +(Math.random() * 120 + 20).toFixed(2)
-          });
+            amount: 1200,
+            method: 'Карта',
+            status: 'Выплачено'
+          }];
         }
-        appData.hist = arr;
-      }
-      
-      if(appData.payouts.length === 0){
-        const d = new Date(Date.now() - 86400000 * 12);
-        const dateStr = `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth()+1).toString().padStart(2, '0')}.${d.getFullYear()}`;
         
-        appData.payouts = [{
-          date: dateStr,
-          amount: 1200,
-          method: 'Карта',
-          status: 'Выплачено'
-        }];
-      }
-      
-      if(!appData.ref.code){
-        appData.ref = {
-          code: genRefCode(),
-          clicks: 43,
-          signups: 7,
-          active: 5,
-          earn: 318.50
-        };
-      }
-      
-      if(appData.tickets.length === 0){
-        appData.tickets = [];
-      }
-      
-      if(appData.events.length === 0){
-        seedEventsIfEmpty();
+        if(!appData.ref.code){
+          appData.ref = {
+            code: genRefCode(),
+            clicks: 43,
+            signups: 7,
+            active: 5,
+            earn: 318.50
+          };
+        }
+        
+        if(appData.tickets.length === 0){
+          appData.tickets = [];
+        }
+        
+        if(appData.events.length === 0){
+          seedEventsIfEmpty();
+        }
+      } catch (error) {
+        console.error('Error seeding data:', error);
+        toast('Ошибка инициализации данных', false);
       }
     }
     
     function mkFile(name, size, views = 0, dls = 0, earn = 0){
-      return {
-        id: uuid(),
-        name,
-        size,
-        uploadedAt: new Date().toISOString(),
-        views,
-        downloads: dls,
-        earnings: +earn,
-        link: genFileLink(name)
-      };
+      try {
+        return {
+          id: uuid(),
+          name: name || 'Без названия',
+          size: size || 0,
+          uploadedAt: new Date().toISOString(),
+          views: views || 0,
+          downloads: dls || 0,
+          earnings: +(earn || 0),
+          link: genFileLink(name || '')
+        };
+      } catch (error) {
+        console.error('Error creating file object:', error);
+        return {
+          id: 'error-' + Date.now(),
+          name: 'Ошибка',
+          size: 0,
+          uploadedAt: new Date().toISOString(),
+          views: 0,
+          downloads: 0,
+          earnings: 0,
+          link: '#'
+        };
+      }
     }
     
     function genFileLink(name){
-      const base = 'https://dropfiles.example/u/';
-      const u = appData.user || 'guest';
-      return base + encodeURIComponent(u) + '/' + encodeURIComponent(name);
+      try {
+        const base = 'https://dropfiles.example/u/';
+        const u = appData.user || 'guest';
+        return base + encodeURIComponent(u) + '/' + encodeURIComponent(name || '');
+      } catch (error) {
+        console.error('Error generating file link:', error);
+        return '#';
+      }
     }
     
     function genRefCode(){
-      const u = appData.user || 'guest';
-      return (u + '-' + Math.random().toString(36).slice(2, 8)).toUpperCase();
+      try {
+        const u = appData.user || 'guest';
+        return (u + '-' + Math.random().toString(36).slice(2, 8)).toUpperCase();
+      } catch (error) {
+        console.error('Error generating ref code:', error);
+        return 'REF-' + Date.now().toString(36).slice(-6).toUpperCase();
+      }
     }
     
     // ---------- Home KPIs ----------
     function renderKPIs(){
-      const files = appData.files;
-      const kpiFiles = document.getElementById('kpi-files');
-      const kpiViewsHome = document.getElementById('kpi-views-home');
-      const kpiDlsHome = document.getElementById('kpi-dls-home');
-      const kpiEarnHome = document.getElementById('kpi-earn-home');
-      
-      if (kpiFiles) kpiFiles.textContent = files.length;
-      if (kpiViewsHome) kpiViewsHome.textContent = fmt(files.reduce((s, f) => s + f.views, 0));
-      if (kpiDlsHome) kpiDlsHome.textContent = fmt(files.reduce((s, f) => s + f.downloads, 0));
-      
-      const totalEarn = files.reduce((s, f) => s + f.earnings, 0) + (appData.ref.earn || 0);
-      
-      if (kpiEarnHome) kpiEarnHome.textContent = totalEarn.toFixed(2) + ' ₽';
+      try {
+        const files = appData.files;
+        const kpiFiles = document.getElementById('kpi-files');
+        const kpiViewsHome = document.getElementById('kpi-views-home');
+        const kpiDlsHome = document.getElementById('kpi-dls-home');
+        const kpiEarnHome = document.getElementById('kpi-earn-home');
+        
+        if (kpiFiles) kpiFiles.textContent = files.length;
+        if (kpiViewsHome) kpiViewsHome.textContent = fmt(files.reduce((s, f) => s + (f.views || 0), 0));
+        if (kpiDlsHome) kpiDlsHome.textContent = fmt(files.reduce((s, f) => s + (f.downloads || 0), 0));
+        
+        const totalEarn = files.reduce((s, f) => s + (f.earnings || 0), 0) + (appData.ref.earn || 0);
+        
+        if (kpiEarnHome) kpiEarnHome.textContent = totalEarn.toFixed(2) + ' ₽';
+      } catch (error) {
+        console.error('Error rendering KPIs:', error);
+      }
     }
     
     // ---------- Income ----------
     function renderSums(){
-      const hist = appData.hist;
-      const filesEarn = appData.files.reduce((s, f) => s + f.earnings, 0);
-      const refEarn = appData.ref.earn || 0;
-      
-      const grand = filesEarn + refEarn;
-      const todaySum = hist.filter(r => r.date === today()).reduce((s, r) => s + r.income, 0);
-      
-      // Рассчитываем средний доход за день за последние 7 дней
-      const last7Days = hist.slice(-7);
-      const avgDailyIncome = last7Days.reduce((s, r) => s + r.income, 0) / last7Days.length;
-      const month = avgDailyIncome * 30;
-      
-      const paid = appData.payouts.filter(p => p.status === 'Выплачено').reduce((s, p) => s + p.amount, 0);
-      const pending = Math.max(0, grand - paid);
-      
-      const sumTotal = document.getElementById('sum-total');
-      const sumToday = document.getElementById('sum-today');
-      const sumMonth = document.getElementById('sum-month');
-      const sumPending = document.getElementById('sum-pending');
-      
-      if (sumTotal) sumTotal.textContent = grand.toFixed(2) + ' ₽';
-      if (sumToday) sumToday.textContent = todaySum.toFixed(2) + ' ₽';
-      if (sumMonth) sumMonth.textContent = Math.max(month, grand).toFixed(2) + ' ₽';
-      if (sumPending) sumPending.textContent = pending.toFixed(2) + ' ₽';
+      try {
+        const hist = appData.hist;
+        const filesEarn = appData.files.reduce((s, f) => s + (f.earnings || 0), 0);
+        const refEarn = appData.ref.earn || 0;
+        
+        const grand = filesEarn + refEarn;
+        const todaySum = hist.filter(r => r.date === today()).reduce((s, r) => s + (r.income || 0), 0);
+        
+        // Рассчитываем средний доход за день за последние 7 дней
+        const last7Days = hist.slice(-7);
+        const avgDailyIncome = last7Days.reduce((s, r) => s + (r.income || 0), 0) / Math.max(last7Days.length, 1);
+        const month = avgDailyIncome * 30;
+        
+        const paid = appData.payouts.filter(p => p.status === 'Выплачено').reduce((s, p) => s + (p.amount || 0), 0);
+        const pending = Math.max(0, grand - paid);
+        
+        const sumTotal = document.getElementById('sum-total');
+        const sumToday = document.getElementById('sum-today');
+        const sumMonth = document.getElementById('sum-month');
+        const sumPending = document.getElementById('sum-pending');
+        
+        if (sumTotal) sumTotal.textContent = grand.toFixed(2) + ' ₽';
+        if (sumToday) sumToday.textContent = todaySum.toFixed(2) + ' ₽';
+        if (sumMonth) sumMonth.textContent = Math.max(month, grand).toFixed(2) + ' ₽';
+        if (sumPending) sumPending.textContent = pending.toFixed(2) + ' ₽';
+      } catch (error) {
+        console.error('Error rendering sums:', error);
+      }
     }
     
     function renderChart(){
-      const chart = document.getElementById('chart');
-      if (!chart) return;
-      
-      chart.innerHTML = '';
-      const last7 = appData.hist.slice(-7);
-      
-      if (last7.length === 0) return;
-      
-      const max = Math.max(1, ...last7.map(r => r.income));
-      
-      last7.forEach(r => {
-        const wrap = document.createElement('div');
-        wrap.className = 'flex flex-col gap-1 items-stretch';
+      try {
+        const chart = document.getElementById('chart');
+        if (!chart) return;
         
-        const val = document.createElement('div');
-        val.className = 'text-xs text-white/80';
-        val.textContent = r.income.toFixed(0) + ' ₽';
+        chart.innerHTML = '';
+        const last7 = appData.hist.slice(-7);
         
-        const bar = document.createElement('div');
-        bar.className = 'bar-sm';
-        bar.style.width = (r.income / max * 100).toFixed(0) + '%';
+        if (last7.length === 0) return;
         
-        const lab = document.createElement('div');
-        lab.className = 'text-xs text-white/60';
-        lab.textContent = r.date.split('.').slice(0, 2).join('.');
+        const max = Math.max(1, ...last7.map(r => r.income || 0));
         
-        wrap.append(val, bar, lab);
-        chart.appendChild(wrap);
-      });
+        last7.forEach(r => {
+          const wrap = document.createElement('div');
+          wrap.className = 'flex flex-col gap-1 items-stretch';
+          
+          const val = document.createElement('div');
+          val.className = 'text-xs text-white/80';
+          val.textContent = (r.income || 0).toFixed(0) + ' ₽';
+          
+          const bar = document.createElement('div');
+          bar.className = 'bar-sm';
+          bar.style.width = ((r.income || 0) / max * 100).toFixed(0) + '%';
+          
+          const lab = document.createElement('div');
+          lab.className = 'text-xs text-white/60';
+          lab.textContent = (r.date || '').split('.').slice(0, 2).join('.');
+          
+          wrap.append(val, bar, lab);
+          chart.appendChild(wrap);
+        });
+      } catch (error) {
+        console.error('Error rendering chart:', error);
+      }
     }
     
     function renderHistory(){
-      const body = document.getElementById('history-body');
-      if (!body) return;
-      
-      body.innerHTML = '';
-      
-      appData.hist.slice().reverse().forEach(r => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td class="px-4 py-2">${r.date}</td>
-                        <td class="px-4 py-2">${r.source}</td>
-                        <td class="px-4 py-2">${r.views}</td>
-                        <td class="px-4 py-2">${r.income.toFixed(2)} ₽</td>`;
-        body.appendChild(tr);
-      });
+      try {
+        const body = document.getElementById('history-body');
+        if (!body) return;
+        
+        body.innerHTML = '';
+        
+        appData.hist.slice().reverse().forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td class="px-4 py-2">${r.date || ''}</td>
+                          <td class="px-4 py-2">${r.source || ''}</td>
+                          <td class="px-4 py-2">${r.views || 0}</td>
+                          <td class="px-4 py-2">${(r.income || 0).toFixed(2)} ₽</td>`;
+          body.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Error rendering history:', error);
+      }
     }
     
     // ---------- Upload ----------
@@ -1003,18 +1355,26 @@
     if(dropArea){
       ['dragover', 'dragenter'].forEach(ev => {
         dropArea.addEventListener(ev, e => {
-          e.preventDefault();
-          dropArea.classList.add('dragover');
+          try {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+          } catch (error) {
+            console.error('Error in drag event:', error);
+          }
         });
       });
       
       ['dragleave', 'drop'].forEach(ev => {
         dropArea.addEventListener(ev, e => {
-          if(ev === 'drop'){
-            e.preventDefault();
-            handleDrop(e);
+          try {
+            if(ev === 'drop'){
+              e.preventDefault();
+              handleDrop(e);
+            }
+            dropArea.classList.remove('dragover');
+          } catch (error) {
+            console.error('Error in drop event:', error);
           }
-          dropArea.classList.remove('dragover');
         });
       });
     }
@@ -1026,14 +1386,26 @@
     }
     
     if(fileElem) {
-      fileElem.addEventListener('change', startUpload);
+      fileElem.addEventListener('change', (e) => {
+        try {
+          startUpload();
+        } catch (error) {
+          console.error('Error in file change event:', error);
+          toast('Ошибка обработки файлов', false);
+        }
+      });
     }
     
     function handleDrop(e){
-      if(!requireAuth()) return;
-      if (fileElem) {
-        fileElem.files = e.dataTransfer.files;
-        startUpload();
+      try {
+        if(!requireAuth()) return;
+        if (fileElem) {
+          fileElem.files = e.dataTransfer.files;
+          startUpload();
+        }
+      } catch (error) {
+        console.error('Error handling drop:', error);
+        toast('Ошибка обработки перетаскивания', false);
       }
     }
     
@@ -1041,6 +1413,26 @@
       if (!fileElem || !fileElem.files || fileElem.files.length === 0) return;
       
       const files = fileElem.files;
+      
+      // Validate file types and sizes
+      const maxSize = 100 * 1024 * 1024; // 100MB
+      const allowedTypes = ['image/', 'video/', 'audio/', 'text/', 'application/'];
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        if (file.size > maxSize) {
+          toast(`Файл ${file.name} слишком большой (макс. 100MB)`, false);
+          return;
+        }
+        
+        const isValidType = allowedTypes.some(type => file.type.startsWith(type));
+        if (!isValidType) {
+          toast(`Неподдерживаемый тип файла: ${file.name}`, false);
+          return;
+        }
+      }
+      
       if (progWrap) progWrap.classList.remove('hidden');
       
       let pct = 0;
@@ -1053,159 +1445,212 @@
         if(pct >= 100){
           clearInterval(t);
           
-          const newFiles = [];
-          for (let i = 0; i < files.length; i++) {
-            const f = files[i];
-            newFiles.unshift(mkFile(
-              f.name,
-              f.size,
-              Math.floor(Math.random() * 900),
-              Math.floor(Math.random() * 200),
-              +(Math.random() * 150).toFixed(2)
-            ));
+          try {
+            const newFiles = [];
+            for (let i = 0; i < files.length; i++) {
+              const f = files[i];
+              newFiles.unshift(mkFile(
+                f.name,
+                f.size,
+                Math.floor(Math.random() * 900),
+                Math.floor(Math.random() * 200),
+                +(Math.random() * 150).toFixed(2)
+              ));
+            }
+            
+            appData.files = [...newFiles, ...appData.files];
+            
+            const hist = appData.hist;
+            const d = new Date();
+            const dateStr = `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth()+1).toString().padStart(2, '0')}.${d.getFullYear()}`;
+            
+            hist.push({
+              date: dateStr,
+              source: 'Файлы',
+              views: Math.floor(Math.random() * 1000 + 200),
+              income: +(Math.random() * 120 + 30).toFixed(2)
+            });
+            
+            appData.hist = hist;
+            
+            renderRecentFiles();
+            renderFiles();
+            renderSums();
+            renderChart();
+            renderHistory();
+            renderKPIs();
+            
+            toast('Загрузка завершена');
+          } catch (error) {
+            console.error('Upload error:', error);
+            toast('Ошибка загрузки файлов', false);
+          } finally {
+            if (progWrap) progWrap.classList.add('hidden');
+            if (progBar) progBar.style.width = '0%';
+            if (progPct) progPct.textContent = '0%';
+            if (fileElem) fileElem.value = '';
           }
-          
-          appData.files = [...newFiles, ...appData.files];
-          
-          const hist = appData.hist;
-          const d = new Date();
-          const dateStr = `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth()+1).toString().padStart(2, '0')}.${d.getFullYear()}`;
-          
-          hist.push({
-            date: dateStr,
-            source: 'Файлы',
-            views: Math.floor(Math.random() * 1000 + 200),
-            income: +(Math.random() * 120 + 30).toFixed(2)
-          });
-          
-          appData.hist = hist;
-          
-          renderRecentFiles();
-          renderFiles();
-          renderSums();
-          renderChart();
-          renderHistory();
-          renderKPIs();
-          
-          toast('Загрузка завершена');
-          
-          if (progWrap) progWrap.classList.add('hidden');
-          if (progBar) progBar.style.width = '0%';
-          if (progPct) progPct.textContent = '0%';
-          
-          if (fileElem) fileElem.value = '';
         }
       }, 300);
     }
     
     function renderRecentFiles(){
-      const cont = document.getElementById('recent-files');
-      if(!cont) return;
-      
-      cont.innerHTML = '';
-      
-      appData.files.slice(0, 6).forEach(f => {
-        const card = document.createElement('div');
-        card.className = 'p-4 bg-white/5 rounded-lg border border-white/10';
+      try {
+        const cont = document.getElementById('recent-files');
+        if(!cont) return;
         
-        card.innerHTML = `
-          <div class="font-semibold truncate" title="${f.name}">${f.name}</div>
-          <div class="text-xs text-white/60">${formatSize(f.size)} · ${new Date(f.uploadedAt).toLocaleDateString()}</div>
-          <div class="mt-2 grid grid-cols-3 gap-2 text-center text-sm">
-            <div class="bg-white/5 rounded p-2"><div class="font-semibold">${f.views}</div><div class="text-white/60 text-xs">Просм.</div></div>
-            <div class="bg-white/5 rounded p-2"><div class="font-semibold">${f.downloads}</div><div class="text-white/60 text-xs">Загруз.</div></div>
-            <div class="bg-white/5 rounded p-2"><div class="font-semibold">${f.earnings.toFixed(2)} ₽</div><div class="text-white/60 text-xs">Доход</div></div>
-          </div>
-          <div class="mt-3 flex flex-wrap gap-2">
-            <button class="px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20" onclick="copy('${f.link}')">Копировать ссылку</button>
-            <button class="px-3 py-1.5 rounded-md bg-red-600/80 hover:bg-red-600" onclick="deleteFile('${f.id}')">Удалить</button>
-          </div>`;
+        cont.innerHTML = '';
         
-        cont.appendChild(card);
-      });
+        appData.files.slice(0, 6).forEach(f => {
+          const card = document.createElement('div');
+          card.className = 'p-4 bg-white/5 rounded-lg border border-white/10';
+          
+          const uploadDate = f.uploadedAt ? new Date(f.uploadedAt).toLocaleDateString() : 'Неизвестно';
+          
+          card.innerHTML = `
+            <div class="font-semibold truncate" title="${f.name || 'Без названия'}">${f.name || 'Без названия'}</div>
+            <div class="text-xs text-white/60">${formatSize(f.size || 0)} · ${uploadDate}</div>
+            <div class="mt-2 grid grid-cols-3 gap-2 text-center text-sm">
+              <div class="bg-white/5 rounded p-2"><div class="font-semibold">${f.views || 0}</div><div class="text-white/60 text-xs">Просм.</div></div>
+              <div class="bg-white/5 rounded p-2"><div class="font-semibold">${f.downloads || 0}</div><div class="text-white/60 text-xs">Загруз.</div></div>
+              <div class="bg-white/5 rounded p-2"><div class="font-semibold">${(f.earnings || 0).toFixed(2)} ₽</div><div class="text-white/60 text-xs">Доход</div></div>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button class="px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20" onclick="copy('${f.link || ''}')">Копировать ссылку</button>
+              <button class="px-3 py-1.5 rounded-md bg-red-600/80 hover:bg-red-600" onclick="deleteFile('${f.id || ''}')">Удалить</button>
+            </div>`;
+          
+          cont.appendChild(card);
+        });
+      } catch (error) {
+        console.error('Error rendering recent files:', error);
+      }
     }
     
     // ---------- Files ----------
     function renderFiles(filter = ''){
-      const body = document.getElementById('files-body');
-      if(!body) return;
-      
-      body.innerHTML = '';
-      
-      const files = appData.files;
-      const q = filter || (document.getElementById('search-files')?.value.trim().toLowerCase() || '');
-      
-      files.filter(f => f.name.toLowerCase().includes(q)).forEach(f => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="px-4 py-2 truncate" title="${f.name}">${f.name}</td>
-          <td class="px-4 py-2">${formatSize(f.size)}</td>
-          <td class="px-4 py-2">${f.views}</td>
-          <td class="px-4 py-2">${f.downloads}</td>
-          <td class="px-4 py-2">${f.earnings.toFixed(2)} ₽</td>
-          <td class="px-4 py-2 flex flex-wrap gap-2">
-            <button class="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20" onclick="copy('${f.link}')">Ссылка</button>
-            <button class="px-3 py-1 rounded-md bg-red-600/80 hover:bg-red-600" onclick="deleteFile('${f.id}')">Удалить</button>
-          </td>`;
-        body.appendChild(tr);
-      });
+      try {
+        const body = document.getElementById('files-body');
+        if(!body) return;
+        
+        body.innerHTML = '';
+        
+        const files = appData.files;
+        const searchInput = document.getElementById('search-files');
+        const q = filter || (searchInput?.value.trim().toLowerCase() || '');
+        
+        files.filter(f => (f.name || '').toLowerCase().includes(q)).forEach(f => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="px-4 py-2 truncate" title="${f.name || 'Без названия'}">${f.name || 'Без названия'}</td>
+            <td class="px-4 py-2">${formatSize(f.size || 0)}</td>
+            <td class="px-4 py-2">${f.views || 0}</td>
+            <td class="px-4 py-2">${f.downloads || 0}</td>
+            <td class="px-4 py-2">${(f.earnings || 0).toFixed(2)} ₽</td>
+            <td class="px-4 py-2 flex flex-wrap gap-2">
+              <button class="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20" onclick="copy('${f.link || ''}')">Ссылка</button>
+              <button class="px-3 py-1 rounded-md bg-red-600/80 hover:bg-red-600" onclick="deleteFile('${f.id || ''}')">Удалить</button>
+            </td>`;
+          body.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Error rendering files:', error);
+      }
     }
     
     const searchFiles = document.getElementById('search-files');
     if (searchFiles) {
-      searchFiles.addEventListener('input', e => renderFiles(e.target.value));
+      searchFiles.addEventListener('input', e => {
+        try {
+          renderFiles(e.target.value);
+        } catch (error) {
+          console.error('Error in search input:', error);
+        }
+      });
     }
     
     function deleteFile(id){
-      appData.files = appData.files.filter(f => f.id !== id);
-      renderFiles();
-      renderRecentFiles();
-      renderKPIs();
-      toast('Файл удалён', false);
+      try {
+        if (!id) {
+          toast('Ошибка: неверный ID файла', false);
+          return;
+        }
+        
+        appData.files = appData.files.filter(f => f.id !== id);
+        renderFiles();
+        renderRecentFiles();
+        renderKPIs();
+        toast('Файл удалён', false);
+      } catch (error) {
+        console.error('Error deleting file:', error);
+        toast('Ошибка удаления файла', false);
+      }
     }
     
     function refreshFiles(){
-      const searchFiles = document.getElementById('search-files');
-      if (searchFiles) searchFiles.value = '';
-      renderFiles('');
+      try {
+        const searchFiles = document.getElementById('search-files');
+        if (searchFiles) searchFiles.value = '';
+        renderFiles('');
+      } catch (error) {
+        console.error('Error refreshing files:', error);
+        toast('Ошибка обновления файлов', false);
+      }
     }
     
     // ---------- Ref ----------
     function renderRef(){
-      const ref = appData.ref;
-      const refLink = document.getElementById('ref-link');
-      const refClicks = document.getElementById('ref-clicks');
-      const refSignups = document.getElementById('ref-signups');
-      const refActive = document.getElementById('ref-active');
-      const refEarn = document.getElementById('ref-earn');
-      
-      if (refLink) refLink.value = location.origin + '/?ref=' + ref.code;
-      if (refClicks) refClicks.textContent = ref.clicks;
-      if (refSignups) refSignups.textContent = ref.signups;
-      if (refActive) refActive.textContent = ref.active;
-      if (refEarn) refEarn.textContent = ref.earn.toFixed(2) + ' ₽';
+      try {
+        const ref = appData.ref;
+        const refLink = document.getElementById('ref-link');
+        const refClicks = document.getElementById('ref-clicks');
+        const refSignups = document.getElementById('ref-signups');
+        const refActive = document.getElementById('ref-active');
+        const refEarn = document.getElementById('ref-earn');
+        
+        if (refLink) refLink.value = location.origin + '/?ref=' + (ref.code || '');
+        if (refClicks) refClicks.textContent = ref.clicks || 0;
+        if (refSignups) refSignups.textContent = ref.signups || 0;
+        if (refActive) refActive.textContent = ref.active || 0;
+        if (refEarn) refEarn.textContent = (ref.earn || 0).toFixed(2) + ' ₽';
+      } catch (error) {
+        console.error('Error rendering ref:', error);
+      }
     }
     
     function copyRef(){
-      const refLink = document.getElementById('ref-link');
-      if (refLink) copy(refLink.value);
+      try {
+        const refLink = document.getElementById('ref-link');
+        if (refLink && refLink.value) {
+          copy(refLink.value);
+        } else {
+          toast('Ошибка: ссылка не найдена', false);
+        }
+      } catch (error) {
+        console.error('Error copying ref link:', error);
+        toast('Ошибка копирования ссылки', false);
+      }
     }
     
     // ---------- Payouts ----------
     function renderPayouts(){
-      const body = document.getElementById('payouts-body');
-      if (!body) return;
-      
-      body.innerHTML = '';
-      
-      appData.payouts.forEach(p => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td class="px-4 py-2">${p.date}</td>
-                        <td class="px-4 py-2">${p.amount} ₽</td>
-                        <td class="px-4 py-2">${p.method}</td>
-                        <td class="px-4 py-2">${p.status}</td>`;
-        body.appendChild(tr);
-      });
+      try {
+        const body = document.getElementById('payouts-body');
+        if (!body) return;
+        
+        body.innerHTML = '';
+        
+        appData.payouts.forEach(p => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td class="px-4 py-2">${p.date || ''}</td>
+                          <td class="px-4 py-2">${p.amount || 0} ₽</td>
+                          <td class="px-4 py-2">${p.method || ''}</td>
+                          <td class="px-4 py-2">${p.status || ''}</td>`;
+          body.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Error rendering payouts:', error);
+      }
     }
     
     const formPayout = document.getElementById('form-payout');
@@ -1215,37 +1660,64 @@
         
         if(!requireAuth()) return;
         
-        const amt = parseFloat(document.getElementById('payout-amount').value);
-        const method = document.getElementById('payout-method').value;
-        const det = document.getElementById('payout-details').value.trim();
+        const amountInput = document.getElementById('payout-amount');
+        const methodInput = document.getElementById('payout-method');
+        const detailsInput = document.getElementById('payout-details');
         
-        if(isNaN(amt) || amt < 100 || !det) {
-          toast('Проверьте данные', false);
+        // Validate inputs
+        const isAmountValid = validateInput(amountInput, 'number');
+        const isDetailsValid = validateInput(detailsInput, 'text');
+        
+        if (!isAmountValid || !isDetailsValid) {
           return;
         }
         
-        const d = new Date();
-        const dateStr = `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth()+1).toString().padStart(2, '0')}.${d.getFullYear()}`;
+        const amt = parseFloat(amountInput.value);
+        const method = methodInput.value;
+        const det = detailsInput.value.trim();
         
-        appData.payouts.unshift({
-          date: dateStr,
-          amount: amt,
-          method,
-          status: 'В обработке'
-        });
+        if(amt < 100) {
+          amountInput.classList.add('error');
+          const errorEl = document.createElement('div');
+          errorEl.className = 'error-message';
+          errorEl.textContent = 'Минимальная сумма: 100 ₽';
+          amountInput.parentNode.appendChild(errorEl);
+          return;
+        }
         
-        renderPayouts();
-        toast('Заявка отправлена');
-        e.target.reset();
+        try {
+          const d = new Date();
+          const dateStr = `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth()+1).toString().padStart(2, '0')}.${d.getFullYear()}`;
+          
+          appData.payouts.unshift({
+            date: dateStr,
+            amount: amt,
+            method,
+            status: 'В обработке'
+          });
+          
+          renderPayouts();
+          toast('Заявка отправлена');
+          formPayout.reset();
+        } catch (error) {
+          console.error('Payout request error:', error);
+          toast('Ошибка отправки заявки', false);
+        }
       });
     }
     
     // ---------- Support ----------
     function toggleAccordion(el){
-      if (el.style.display === 'none' || !el.style.display) {
-        el.style.display = 'block';
-      } else {
-        el.style.display = 'none';
+      try {
+        if (!el) return;
+        
+        if (el.style.display === 'none' || !el.style.display) {
+          el.style.display = 'block';
+        } else {
+          el.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error toggling accordion:', error);
       }
     }
     
@@ -1254,28 +1726,40 @@
       formSupport.addEventListener('submit', e => {
         e.preventDefault();
         
-        const email = document.getElementById('sup-email').value.trim();
-        const topic = document.getElementById('sup-topic').value;
-        const text = document.getElementById('sup-text').value.trim();
+        const emailInput = document.getElementById('sup-email');
+        const topicInput = document.getElementById('sup-topic');
+        const textInput = document.getElementById('sup-text');
         
-        if(!email || !text) {
-          toast('Заполните все поля', false);
+        // Validate inputs
+        const isEmailValid = validateInput(emailInput, 'email');
+        const isTextValid = validateInput(textInput, 'text');
+        
+        if (!isEmailValid || !isTextValid) {
           return;
         }
         
-        const d = new Date();
-        const dateStr = `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth()+1).toString().padStart(2, '0')}.${d.getFullYear()}`;
+        const email = emailInput.value.trim();
+        const topic = topicInput.value;
+        const text = textInput.value.trim();
         
-        appData.tickets.unshift({
-          date: dateStr,
-          email,
-          topic,
-          text,
-          status: 'Новый'
-        });
-        
-        toast('Обращение отправлено');
-        e.target.reset();
+        try {
+          const d = new Date();
+          const dateStr = `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth()+1).toString().padStart(2, '0')}.${d.getFullYear()}`;
+          
+          appData.tickets.unshift({
+            date: dateStr,
+            email,
+            topic,
+            text,
+            status: 'Новый'
+          });
+          
+          toast('Обращение отправлено');
+          formSupport.reset();
+        } catch (error) {
+          console.error('Support ticket error:', error);
+          toast('Ошибка отправки обращения', false);
+        }
       });
     }
     
@@ -1622,66 +2106,72 @@
     }
     
     function seedEventsIfEmpty(){
-      if (appData.events.length > 0) return;
-      
-      const files = appData.files;
-      const refDomains = ['twitter.com', 'vk.com', 'youtube.com', 't.me', 'discord.gg', 'habr.com', 'direct'];
-      const countries = ['RU', 'BY', 'UA', 'KZ', 'PL', 'DE', 'US', 'IN'];
-      const devices = ['desktop', 'mobile', 'mobile', 'desktop', 'tablet', 'bot'];
-      const sources = ['files', 'links', 'ref', 'files', 'files', 'links'];
-      
-      const events = [];
-      const days = 30;
-      
-      for(let d = days - 1; d >= 0; d--){
-        const date = new Date();
-        date.setDate(date.getDate() - d);
-        const day = date.toISOString().slice(0, 10);
+      try {
+        if (appData.events.length > 0) return;
         
-        const perDay = Math.floor(80 + Math.random() * 140);
+        const files = appData.files;
+        const refDomains = ['twitter.com', 'vk.com', 'youtube.com', 't.me', 'discord.gg', 'habr.com', 'direct'];
+        const countries = ['RU', 'BY', 'UA', 'KZ', 'PL', 'DE', 'US', 'IN'];
+        const devices = ['desktop', 'mobile', 'mobile', 'desktop', 'tablet', 'bot'];
+        const sources = ['files', 'links', 'ref', 'files', 'files', 'links'];
         
-        for(let i = 0; i < perDay; i++){
-          const f = files.length ? files[Math.floor(Math.random() * files.length)] : { id: 'nofile', name: 'Пример', size: 1234 };
-          const device = devices[Math.floor(Math.random() * devices.length)];
-          const source = sources[Math.floor(Math.random() * sources.length)];
-          const ref = refDomains[Math.floor(Math.random() * refDomains.length)];
-          const country = countries[Math.floor(Math.random() * countries.length)];
+        const events = [];
+        const days = 30;
+        
+        for(let d = days - 1; d >= 0; d--){
+          const date = new Date();
+          date.setDate(date.getDate() - d);
+          const day = date.toISOString().slice(0, 10);
           
-          const isDownload = Math.random() < 0.18;
-          const income = isDownload ? +(Math.random() * 2.0).toFixed(2) : 0;
+          const perDay = Math.floor(80 + Math.random() * 140);
           
-          events.push({
-            ts: new Date(day + 'T' + String(Math.floor(Math.random() * 24)).padStart(2, '0') + ':' + String(Math.floor(Math.random() * 60)).padStart(2, '0') + ':00Z').toISOString(),
-            type: isDownload ? 'download' : 'view',
-            fileId: f.id,
-            fileName: f.name,
-            device,
-            source,
-            ref,
-            country,
-            income
-          });
+          for(let i = 0; i < perDay; i++){
+            const f = files.length ? files[Math.floor(Math.random() * files.length)] : { id: 'nofile', name: 'Пример', size: 1234 };
+            const device = devices[Math.floor(Math.random() * devices.length)];
+            const source = sources[Math.floor(Math.random() * sources.length)];
+            const ref = refDomains[Math.floor(Math.random() * refDomains.length)];
+            const country = countries[Math.floor(Math.random() * countries.length)];
+            
+            const isDownload = Math.random() < 0.18;
+            const income = isDownload ? +(Math.random() * 2.0).toFixed(2) : 0;
+            
+            events.push({
+              ts: new Date(day + 'T' + String(Math.floor(Math.random() * 24)).padStart(2, '0') + ':' + String(Math.floor(Math.random() * 60)).padStart(2, '0') + ':00Z').toISOString(),
+              type: isDownload ? 'download' : 'view',
+              fileId: f.id,
+              fileName: f.name,
+              device,
+              source,
+              ref,
+              country,
+              income
+            });
+          }
         }
+        
+        appData.events = events;
+      } catch (error) {
+        console.error('Error seeding events:', error);
+        appData.events = [];
       }
-      
-      appData.events = events;
     }
     
     function renderAnalytics(){
-      seedEventsIfEmpty();
-      
-      // populate countries dropdown once
-      const selCountry = document.getElementById('an-country');
-      if(selCountry && selCountry.options.length <= 1){
-        const countries = Array.from(new Set(appData.events.map(e => e.country))).sort();
+      try {
+        seedEventsIfEmpty();
         
-        countries.forEach(c => {
-          const o = document.createElement('option');
-          o.value = c;
-          o.textContent = c;
-          selCountry.appendChild(o);
-        });
-      }
+        // populate countries dropdown once
+        const selCountry = document.getElementById('an-country');
+        if(selCountry && selCountry.options.length <= 1){
+          const countries = Array.from(new Set(appData.events.map(e => e.country || '').filter(c => c))).sort();
+          
+          countries.forEach(c => {
+            const o = document.createElement('option');
+            o.value = c;
+            o.textContent = c;
+            selCountry.appendChild(o);
+          });
+        }
       
       const ev = filterEvents();
       
@@ -1861,149 +2351,277 @@
           anEventsCount.textContent = `${last.length} событий`;
         }
       }
+      } catch (error) {
+        console.error('Error rendering analytics:', error);
+        toast('Ошибка отображения аналитики', false);
+      }
     }
     
     function bindAnalyticsUI(){
-      document.querySelectorAll('#analytics [data-range]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('#analytics [data-range]').forEach(b => {
-            b.classList.remove('btn-primary');
+      try {
+        document.querySelectorAll('#analytics [data-range]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('#analytics [data-range]').forEach(b => {
+              b.classList.remove('btn-primary');
+            });
+            
+            btn.classList.add('btn-primary');
+            anState.range = btn.dataset.range;
+            renderAnalytics();
           });
-          
-          btn.classList.add('btn-primary');
-          anState.range = btn.dataset.range;
-          renderAnalytics();
         });
-      });
-      
-      const defBtn = document.querySelector(`#analytics [data-range="${anState.range}"]`);
-      if(defBtn) defBtn.classList.add('btn-primary');
-      
-      const anSource = document.getElementById('an-source');
-      if (anSource) {
-        anSource.addEventListener('change', e => {
-          anState.source = e.target.value;
-          renderAnalytics();
-        });
-      }
-      
-      const anDevice = document.getElementById('an-device');
-      if (anDevice) {
-        anDevice.addEventListener('change', e => {
-          anState.device = e.target.value;
-          renderAnalytics();
-        });
-      }
-      
-      const anCountry = document.getElementById('an-country');
-      if (anCountry) {
-        anCountry.addEventListener('change', e => {
-          anState.country = e.target.value;
-          renderAnalytics();
-        });
-      }
-      
-      const anExport = document.getElementById('an-export');
-      if (anExport) {
-        anExport.addEventListener('click', () => {
-          const ev = filterEvents();
-          const headers = ['ts', 'type', 'fileName', 'device', 'source', 'ref', 'country', 'income'];
-          
-          const rows = ev.map(e => 
-            headers.map(h => `"${String(e[h] ?? '').replace(/"/g, '""')}"`).join(',')
-          );
-          
-          const csv = [headers.join(','), ...rows].join('\n');
-          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-          
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'analytics.csv';
-          
-          a.click();
-          URL.revokeObjectURL(url);
-        });
-      }
-      
-      const anSim = document.getElementById('an-sim');
-      if (anSim) {
-        anSim.addEventListener('click', () => {
-          simulateTraffic(200 + Math.floor(Math.random() * 250));
-          renderAnalytics();
-        });
+        
+        const defBtn = document.querySelector(`#analytics [data-range="${anState.range}"]`);
+        if(defBtn) defBtn.classList.add('btn-primary');
+        
+        const anSource = document.getElementById('an-source');
+        if (anSource) {
+          anSource.addEventListener('change', e => {
+            anState.source = e.target.value;
+            renderAnalytics();
+          });
+        }
+        
+        const anDevice = document.getElementById('an-device');
+        if (anDevice) {
+          anDevice.addEventListener('change', e => {
+            anState.device = e.target.value;
+            renderAnalytics();
+          });
+        }
+        
+        const anCountry = document.getElementById('an-country');
+        if (anCountry) {
+          anCountry.addEventListener('change', e => {
+            anState.country = e.target.value;
+            renderAnalytics();
+          });
+        }
+        
+        const anExport = document.getElementById('an-export');
+        if (anExport) {
+          anExport.addEventListener('click', () => {
+            try {
+              const ev = filterEvents();
+              const headers = ['ts', 'type', 'fileName', 'device', 'source', 'ref', 'country', 'income'];
+              
+              const rows = ev.map(e => 
+                headers.map(h => `"${String(e[h] ?? '').replace(/"/g, '""')}"`).join(',')
+              );
+              
+              const csv = [headers.join(','), ...rows].join('\n');
+              const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+              
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'analytics.csv';
+              
+              a.click();
+              URL.revokeObjectURL(url);
+              
+              toast('Экспорт завершён');
+            } catch (error) {
+              console.error('Export error:', error);
+              toast('Ошибка экспорта', false);
+            }
+          });
+        }
+        
+        const anSim = document.getElementById('an-sim');
+        if (anSim) {
+          anSim.addEventListener('click', () => {
+            try {
+              simulateTraffic(200 + Math.floor(Math.random() * 250));
+              renderAnalytics();
+              toast('Трафик сгенерирован');
+            } catch (error) {
+              console.error('Traffic simulation error:', error);
+              toast('Ошибка симуляции трафика', false);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error binding analytics UI:', error);
       }
     }
     
     // ---- Симуляция трафика (демо) ----
     function simulateTraffic(n = 250){
-      const files = appData.files;
-      const refDomains = ['twitter.com', 'vk.com', 'youtube.com', 't.me', 'discord.gg', 'habr.com', 'direct', 'reddit.com', 'instagram.com'];
-      const countries = ['RU', 'BY', 'UA', 'KZ', 'PL', 'DE', 'US', 'IN', 'BR', 'TR', 'FR', 'IT'];
-      const devices = ['desktop', 'mobile', 'mobile', 'desktop', 'tablet', 'bot'];
-      const sources = ['files', 'links', 'ref', 'files', 'links', 'files'];
-      
-      const events = [...appData.events];
-      const now = Date.now();
-      
-      const { start, end } = getRangeDates(anState.range);
-      const spanDays = Math.floor((end - start) / (1000 * 60 * 60 * 24));
-      
-      for(let i = 0; i < n; i++){
-        const f = files.length ? files[Math.floor(Math.random() * files.length)] : { id: 'nofile', name: 'Материал ' + (i % 7 + 1) };
-        const device = devices[Math.floor(Math.random() * devices.length)];
-        const source = sources[Math.floor(Math.random() * sources.length)];
-        const ref = refDomains[Math.floor(Math.random() * refDomains.length)];
-        const country = countries[Math.floor(Math.random() * countries.length)];
+      try {
+        const files = appData.files;
+        const refDomains = ['twitter.com', 'vk.com', 'youtube.com', 't.me', 'discord.gg', 'habr.com', 'direct', 'reddit.com', 'instagram.com'];
+        const countries = ['RU', 'BY', 'UA', 'KZ', 'PL', 'DE', 'US', 'IN', 'BR', 'TR', 'FR', 'IT'];
+        const devices = ['desktop', 'mobile', 'mobile', 'desktop', 'tablet', 'bot'];
+        const sources = ['files', 'links', 'ref', 'files', 'links', 'files'];
         
-        const isDownload = Math.random() < 0.2;
-        const income = isDownload ? +(Math.random() * 2.5).toFixed(2) : 0;
+        const events = [...appData.events];
+        const now = Date.now();
         
-        // Генерируем дату в пределах выбранного диапазона
-        const randomTime = start.getTime() + Math.random() * (end.getTime() - start.getTime());
-        const ts = new Date(randomTime).toISOString();
+        const { start, end } = getRangeDates(anState.range);
+        const spanDays = Math.floor((end - start) / (1000 * 60 * 60 * 24));
         
-        events.push({
-          ts,
-          type: isDownload ? 'download' : 'view',
-          fileId: f.id,
-          fileName: f.name,
-          device,
-          source,
-          ref,
-          country,
-          income
-        });
+        for(let i = 0; i < n; i++){
+          const f = files.length ? files[Math.floor(Math.random() * files.length)] : { id: 'nofile', name: 'Материал ' + (i % 7 + 1) };
+          const device = devices[Math.floor(Math.random() * devices.length)];
+          const source = sources[Math.floor(Math.random() * sources.length)];
+          const ref = refDomains[Math.floor(Math.random() * refDomains.length)];
+          const country = countries[Math.floor(Math.random() * countries.length)];
+          
+          const isDownload = Math.random() < 0.2;
+          const income = isDownload ? +(Math.random() * 2.5).toFixed(2) : 0;
+          
+          // Генерируем дату в пределах выбранного диапазона
+          const randomTime = start.getTime() + Math.random() * (end.getTime() - start.getTime());
+          const ts = new Date(randomTime).toISOString();
+          
+          events.push({
+            ts,
+            type: isDownload ? 'download' : 'view',
+            fileId: f.id,
+            fileName: f.name,
+            device,
+            source,
+            ref,
+            country,
+            income
+          });
+        }
+        
+        appData.events = events;
+      } catch (error) {
+        console.error('Error simulating traffic:', error);
+        toast('Ошибка симуляции трафика', false);
       }
-      
-      appData.events = events;
     }
     
     // ---- Инициализация приложения ----
     document.addEventListener('DOMContentLoaded', () => {
-      // сиды и UI
-      seedIfEmpty();
-      initAuthUI();
-      
-      renderKPIs();
-      renderSums();
-      renderChart();
-      renderHistory();
-      
-      renderRecentFiles();
-      renderFiles();
-      renderPayouts();
-      renderRef();
-      
-      // аналитика
-      bindAnalyticsUI();
-      renderAnalytics();
-      
-      // включаем .reveal для первого экрана, если не дождались observer
-      document.querySelectorAll('section.active .reveal').forEach(el => {
-        el.classList.add('visible');
-      });
+      try {
+        // Mobile menu event listeners
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        if (mobileMenuBtn) {
+          mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+          try {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            
+            if (mobileMenu && mobileMenuBtn && 
+                !mobileMenu.contains(e.target) && 
+                !mobileMenuBtn.contains(e.target)) {
+              if (!mobileMenu.classList.contains('hidden')) {
+                toggleMobileMenu();
+              }
+            }
+          } catch (error) {
+            console.error('Error handling click outside mobile menu:', error);
+          }
+        });
+        
+        // сиды и UI
+        seedIfEmpty();
+        initAuthUI();
+        
+        renderKPIs();
+        renderSums();
+        renderChart();
+        renderHistory();
+        
+        renderRecentFiles();
+        renderFiles();
+        renderPayouts();
+        renderRef();
+        
+        // аналитика
+        bindAnalyticsUI();
+        renderAnalytics();
+        
+        // включаем .reveal для первого экрана, если не дождались observer
+        document.querySelectorAll('section.active .reveal').forEach(el => {
+          try {
+            el.classList.add('visible');
+          } catch (error) {
+            console.error('Error setting reveal visible:', error);
+          }
+        });
+        
+        // Add loading states to forms
+        addFormLoadingStates();
+        
+      } catch (error) {
+        console.error('Error during app initialization:', error);
+        toast('Ошибка инициализации приложения', false);
+      }
     });
+    
+    // ---------- Form loading states ----------
+    function addFormLoadingStates() {
+      const forms = document.querySelectorAll('form');
+      
+      forms.forEach(form => {
+        const submitBtn = form.querySelector('button[type="submit"], button:not([type])');
+        
+        if (submitBtn) {
+          form.addEventListener('submit', () => {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            
+            // Re-enable after a delay (simulating form submission)
+            setTimeout(() => {
+              submitBtn.disabled = false;
+              submitBtn.classList.remove('loading');
+            }, 2000);
+          });
+        }
+      });
+    }
+    
+    // ---------- Input validation ----------
+    function validateInput(input, type = 'text') {
+      const value = input.value.trim();
+      let isValid = true;
+      let errorMessage = '';
+      
+      // Remove previous error state
+      input.classList.remove('error');
+      const existingError = input.parentNode.querySelector('.error-message');
+      if (existingError) {
+        existingError.remove();
+      }
+      
+      switch (type) {
+        case 'email':
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          isValid = emailRegex.test(value);
+          errorMessage = 'Введите корректный email';
+          break;
+        case 'password':
+          isValid = value.length >= 6;
+          errorMessage = 'Пароль должен содержать минимум 6 символов';
+          break;
+        case 'number':
+          isValid = !isNaN(value) && value > 0;
+          errorMessage = 'Введите корректное число';
+          break;
+        default:
+          isValid = value.length > 0;
+          errorMessage = 'Это поле обязательно для заполнения';
+      }
+      
+      if (!isValid) {
+        input.classList.add('error');
+        const errorEl = document.createElement('div');
+        errorEl.className = 'error-message';
+        errorEl.textContent = errorMessage;
+        input.parentNode.appendChild(errorEl);
+      }
+      
+      return isValid;
+    }
     
     // Глобальный перехват ошибок
     window.addEventListener('error', (e) => {
